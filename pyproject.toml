@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "django>=6.0.5",
+    "django-cleanup>=9.0.0",
     "django-hint>=0.3.2",
+    "django-ninja>=1.6.2",
     "django-stubs>=6.0.4",
     "pillow>=12.2.0",
 ]
@@ -16,3 +18,8 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "myproject.settings"
+
+[dependency-groups]
+dev = [
+    "gunicorn>=26.0.0",
+]
