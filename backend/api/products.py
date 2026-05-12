@@ -1,15 +1,15 @@
 from decimal import Decimal
-from typing import Annotated
 
 from django import forms
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
+from django.db.utils import IntegrityError
 from ninja import File, FilterSchema, ModelSchema, Query, Router, Status
 from ninja.files import UploadedFile
 from ninja.pagination import paginate
 from pydantic import Field
 
-from api.schemas import FormErrorResponse, ItemCreateOut
+from .schemas import FormErrorResponse, ItemCreateOut, DetailError
 from ecommapp.models import Product
 
 router = Router(tags=["products"])
@@ -68,10 +68,13 @@ def get_product(request: HttpRequest, product_id: int):
     return get_object_or_404(Product, pk=product_id)
 
 
-@router.post("/", response={201: ItemCreateOut})
+@router.post("/", response={201: ItemCreateOut, 400: DetailError})
 def create_product(request: HttpRequest, payload: ProductIn):
-    product = Product.objects.create(**payload.dict())
-    return Status(201, ItemCreateOut(id=product.pk))
+    try:
+        product = Product.objects.create(**payload.dict())
+        return Status(201, ItemCreateOut(id=product.pk))
+    except IntegrityError as e:
+        return Status(400, DetailError(detail=str(e)))
 
 
 @router.put("/{product_id}/image", response={200: ProductOut, 400: FormErrorResponse})
@@ -91,14 +94,17 @@ def set_product_image(
     return Status(200, product)
 
 
-@router.put("/{product_id}", response=ProductOut)
+@router.put("/{product_id}", response={200: ProductOut, 400: DetailError})
 def update_product(request: HttpRequest, product_id: int, payload: ProductPatch):
     product = get_object_or_404(Product, pk=product_id)
     for attr, value in payload.dict(exclude_unset=True).items():
         setattr(product, attr, value)
-    product.save()
-
-    return product
+    
+    try:
+        product.save()
+        return product
+    except IntegrityError as e:
+        return Status(400, DetailError(detail=str(e)))
 
 
 @router.delete("/{product_id}")
