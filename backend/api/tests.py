@@ -44,6 +44,17 @@ class ProductSearchTests(TestCase):
         self.assertIn("count", payload)
         return payload
 
+    def expected_product(self, product):
+        return {
+            "price": str(product.price),
+            "id": product.pk,
+            "sku": product.sku,
+            "title": product.title,
+            "description": product.description,
+            "image": None,
+            "category": product.category_id,
+        }
+
     def assert_returned_skus(self, query_params, expected_skus):
         payload = self.get_items(query_params)
 
@@ -51,6 +62,26 @@ class ProductSearchTests(TestCase):
         self.assertEqual(
             {item["sku"] for item in payload["items"]},
             set(expected_skus),
+        )
+
+    def assert_returned_products(self, query_params, expected_products):
+        payload = self.get_items(query_params)
+
+        self.assertEqual(
+            payload,
+            {
+                "items": [
+                    self.expected_product(product)
+                    for product in expected_products
+                ],
+                "count": len(expected_products),
+            },
+        )
+
+    def test_search_products_returns_full_expected_object(self):
+        self.assert_returned_products(
+            {"sku": "tshirt"},
+            [self.shirt],
         )
 
     def test_search_products_filters_by_sku_case_insensitively(self):
@@ -84,6 +115,29 @@ class ProductSearchTests(TestCase):
                 "price_max": "30.00",
             },
             ["TSHIRT-001"],
+        )
+
+    def test_search_products_combines_all_filter_parameters(self):
+        self.assert_returned_products(
+            {
+                "sku": "hoodie",
+                "title": "zip",
+                "category_id": self.clothing.pk,
+                "price_min": "40.00",
+                "price_max": "60.00",
+            },
+            [self.hoodie],
+        )
+
+    def test_search_products_combined_filters_return_empty_when_any_filter_excludes(self):
+        self.assert_returned_products(
+            {
+                "title": "hoodie",
+                "category_id": self.electronics.pk,
+                "price_min": "40.00",
+                "price_max": "100.00",
+            },
+            [],
         )
 
     def test_search_products_returns_paginated_response(self):
