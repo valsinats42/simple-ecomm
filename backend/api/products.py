@@ -55,13 +55,15 @@ class ProductImageForm(forms.ModelForm):
         fields = ["image"]
 
 
-@router.get("/", response=list[ProductOut], summary="List, Search & Filter Products")
+@router.get("/", response=list[ProductOut], 
+            summary="List, Search & Filter Products",
+            auth=None)
 @paginate
 def list_products(request: HttpRequest, filters: Query[ProductFilter]):
     return filters.filter(Product.objects.all().select_related("category"))
 
 
-@router.get("/{product_id}", response=ProductOut)
+@router.get("/{product_id}", response=ProductOut, auth=None)
 def get_product(request: HttpRequest, product_id: int):
     return get_object_or_404(Product, pk=product_id)
 

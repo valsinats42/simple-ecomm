@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -123,3 +124,14 @@ STATIC_URL = "/static/"
 
 MEDIA_ROOT = BASE_DIR / "uploads"
 MEDIA_URL = "/media/"
+
+
+# Demo/default API key hash for local development only. ("secret")
+# Override in production using environment-specific settings.
+# Set to None only for local development when you intentionally want no auth
+DEMO_API_KEY_SHA256 = "2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b"
+
+# An API key hash used to protect the CUD endpoints. Set to `None` for no auth.
+# Generate a hash with:
+#   python -c 'import sys, hashlib; print("\n" + hashlib.sha256(sys.stdin.read().encode()).hexdigest())'
+API_KEY_SHA256 = os.environ.get("API_KEY_SHA256", DEMO_API_KEY_SHA256)

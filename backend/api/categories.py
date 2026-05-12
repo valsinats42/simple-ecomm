@@ -24,13 +24,13 @@ class CategoryOut(ModelSchema):
         fields = ["id", "name", "parent"]
 
 
-@router.get("/", response=list[CategoryOut])
+@router.get("/", response=list[CategoryOut], auth=None)
 @paginate
 def list_categories(request: HttpRequest):
     return Category.objects.all()
 
 
-@router.get("/{category_id}", response=CategoryOut)
+@router.get("/{category_id}", response=CategoryOut, auth=None)
 def get_category(request: HttpRequest, category_id: int):
     return get_object_or_404(Category, id=category_id)
 
