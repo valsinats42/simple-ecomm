@@ -1,3 +1,6 @@
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator
 from django.db import models
 
 class Category(models.Model):
@@ -26,6 +29,7 @@ class Product(models.Model):
         max_digits=10, 
         decimal_places=2,
         db_index=True,
+        validators=[MinValueValidator(Decimal("0.00"))],
     )
     category = models.ForeignKey(
         Category,

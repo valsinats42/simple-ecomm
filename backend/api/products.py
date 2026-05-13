@@ -25,7 +25,7 @@ class ProductOut(ModelSchema):
 
 class ProductIn(ModelSchema):
     category_id: int
-    price: Decimal = Field(examples=["19.99"])
+    price: Decimal = Field(ge=Decimal("0.00"), examples=["19.99"])
 
     class Meta:
         model = Product
@@ -34,6 +34,7 @@ class ProductIn(ModelSchema):
 
 class ProductPatch(ModelSchema):
     category_id: int | None = None
+    price: Decimal | None = Field(None, ge=Decimal("0.00"))
 
     class Meta:
         model = Product
@@ -45,8 +46,8 @@ class ProductFilter(FilterSchema):
     category_id: int | None = None
     sku__icontains: str | None = Field(None, alias="sku") 
     title__icontains: str | None = Field(None, alias="title")
-    price__gte: float | None = Field(None, alias="price_min")
-    price__lte: float | None = Field(None, alias="price_max")
+    price__gte: Decimal | None = Field(None, alias="price_min")
+    price__lte: Decimal | None = Field(None, alias="price_max")
 
 
 class ProductImageForm(forms.ModelForm):
