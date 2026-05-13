@@ -8,6 +8,7 @@ class ItemCreateOut(Schema):
 class DetailError(Schema):
     detail: str
 
+
 class FormError(Schema):
     message: str
     code: str

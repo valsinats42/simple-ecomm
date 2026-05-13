@@ -71,8 +71,7 @@ class ProductSearchTests(TestCase):
             payload,
             {
                 "items": [
-                    self.expected_product(product)
-                    for product in expected_products
+                    self.expected_product(product) for product in expected_products
                 ],
                 "count": len(expected_products),
             },
@@ -129,7 +128,9 @@ class ProductSearchTests(TestCase):
             [self.hoodie],
         )
 
-    def test_search_products_combined_filters_return_empty_when_any_filter_excludes(self):
+    def test_search_products_combined_filters_return_empty_when_any_filter_excludes(
+        self,
+    ):
         self.assert_returned_products(
             {
                 "title": "hoodie",

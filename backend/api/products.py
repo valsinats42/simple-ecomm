@@ -44,7 +44,7 @@ class ProductPatch(ModelSchema):
 
 class ProductFilter(FilterSchema):
     category_id: int | None = None
-    sku__icontains: str | None = Field(None, alias="sku") 
+    sku__icontains: str | None = Field(None, alias="sku")
     title__icontains: str | None = Field(None, alias="title")
     price__gte: Decimal | None = Field(None, alias="price_min")
     price__lte: Decimal | None = Field(None, alias="price_max")
@@ -56,9 +56,9 @@ class ProductImageForm(forms.ModelForm):
         fields = ["image"]
 
 
-@router.get("/", response=list[ProductOut], 
-            summary="List, Search & Filter Products",
-            auth=None)
+@router.get(
+    "/", response=list[ProductOut], summary="List, Search & Filter Products", auth=None
+)
 @paginate
 def list_products(request: HttpRequest, filters: Query[ProductFilter]):
     return filters.filter(Product.objects.all().select_related("category"))
@@ -100,7 +100,7 @@ def update_product(request: HttpRequest, product_id: int, payload: ProductPatch)
     product = get_object_or_404(Product, pk=product_id)
     for attr, value in payload.dict(exclude_unset=True).items():
         setattr(product, attr, value)
-    
+
     try:
         product.save()
         return product

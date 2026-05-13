@@ -15,11 +15,13 @@ try:
 except AttributeError:
     raise ValueError("Please set API_KEY_SHA256 in settings.py")
 
+
 class AuthBearer(HttpBearer):
     def authenticate(self, request: HttpRequest, token: str) -> Any | None:
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         if secrets.compare_digest(secret_hash, token_hash):
             return token
+
 
 auth = None if secret_hash is None else AuthBearer()
 

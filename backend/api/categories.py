@@ -13,6 +13,7 @@ router = Router(tags=["Categories"])
 
 class CategoryIn(ModelSchema):
     parent_id: int | None = None
+
     class Meta:
         model = Category
         fields = ["name"]
@@ -49,7 +50,7 @@ def update_category(request: HttpRequest, category_id: int, payload: CategoryIn)
     category = get_object_or_404(Category, id=category_id)
     for attr, value in payload.dict(exclude_unset=True).items():
         setattr(category, attr, value)
-    
+
     try:
         category.save()
         return Status(204, None)
@@ -64,5 +65,10 @@ def delete_category(request: HttpRequest, category_id: int):
     try:
         category.delete()
         return Status(204, None)
-    except ProtectedError as e:
-        return Status(400, DetailError(detail="Cannot delete category as it is still referenced by other categories or products."))
+    except ProtectedError:
+        return Status(
+            400,
+            DetailError(
+                detail="Cannot delete category as it is still referenced by other categories or products."
+            ),
+        )
