@@ -44,7 +44,7 @@ def create_category(request: HttpRequest, payload: CategoryIn):
         return Status(400, DetailError(detail="Invalid parent ID"))
 
 
-@router.put("/{category_id}", response={204: None, 400: DetailError})
+@router.patch("/{category_id}", response={204: None, 400: DetailError})
 def update_category(request: HttpRequest, category_id: int, payload: CategoryIn):
     category = get_object_or_404(Category, id=category_id)
     for attr, value in payload.dict(exclude_unset=True).items():

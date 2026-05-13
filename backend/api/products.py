@@ -77,7 +77,7 @@ def create_product(request: HttpRequest, payload: ProductIn):
         return Status(400, DetailError(detail=str(e)))
 
 
-@router.put("/{product_id}/image", response={200: ProductOut, 400: FormErrorResponse})
+@router.patch("/{product_id}/image", response={200: ProductOut, 400: FormErrorResponse})
 def set_product_image(
     request: HttpRequest,
     product_id: int,
@@ -94,7 +94,7 @@ def set_product_image(
     return Status(200, product)
 
 
-@router.put("/{product_id}", response={200: ProductOut, 400: DetailError})
+@router.patch("/{product_id}", response={200: ProductOut, 400: DetailError})
 def update_product(request: HttpRequest, product_id: int, payload: ProductPatch):
     product = get_object_or_404(Product, pk=product_id)
     for attr, value in payload.dict(exclude_unset=True).items():
