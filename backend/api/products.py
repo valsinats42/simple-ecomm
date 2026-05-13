@@ -12,7 +12,7 @@ from pydantic import Field
 from .schemas import FormErrorResponse, ItemCreateOut, DetailError
 from ecommapp.models import Product
 
-router = Router(tags=["products"])
+router = Router(tags=["Products"])
 
 
 class ProductOut(ModelSchema):

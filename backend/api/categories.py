@@ -8,7 +8,7 @@ from ninja.pagination import paginate
 from api.schemas import ItemCreateOut, DetailError
 from ecommapp.models import Category
 
-router = Router(tags=["categories"])
+router = Router(tags=["Categories"])
 
 
 class CategoryIn(ModelSchema):
